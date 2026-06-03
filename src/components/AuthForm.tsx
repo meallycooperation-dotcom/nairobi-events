@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 
@@ -9,6 +10,7 @@ type AuthFormProps = {
 };
 
 export function AuthForm({ mode }: AuthFormProps) {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -40,40 +42,26 @@ export function AuthForm({ mode }: AuthFormProps) {
             full_name: fullName,
           });
 
-          setMessage(
-            profileError?.message ?? "Check your inbox for the confirmation email."
-          );
-        } else {
-          setMessage("Check your inbox for the confirmation email.");
+            if (profileError) {
+              setMessage(profileError.message);
+            } else {
+              router.push("/profile");
+            }
+          } else {
+            setMessage("Check your inbox for the confirmation email.");
+          }
         }
-      }
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
-      setMessage(error?.message ?? "Logged in successfully.");
-    }
-
-    setLoading(false);
-  };
-
-  return (
-    <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl shadow-slate-200/40 backdrop-blur-sm">
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-semibold text-slate-950">{mode === "signup" ? "Create an account" : "Welcome back"}</h1>
-        <p className="mt-2 text-sm text-slate-600">
-          {mode === "signup"
-            ? "Register to buy tickets and manage your events."
-            : "Sign in to access your tickets, checkout, and dashboard."}
-        </p>
-      </div>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {mode === "signup" && (
-          <label className="block text-sm font-medium text-slate-700">
-            Full name
-            <input
+        if (error) {
+          setMessage(error.message);
+        } else {
+          router.push("/profile");
+        }
               required
               type="text"
               value={fullName}

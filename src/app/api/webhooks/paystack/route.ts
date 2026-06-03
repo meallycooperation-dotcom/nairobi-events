@@ -1,11 +1,24 @@
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 
 import { verifyPayment } from "@/backend/paystack/verify-payment";
 import { supabaseAdmin } from "@/backend/config/supabase-admin";
 import { generateTicket } from "@/backend/tickets/generate-ticket";
 
 export async function POST(req: Request) {
-  const body = await req.json();
+  const rawBody = await req.text();
+  const signature = req.headers.get("x-paystack-signature");
+
+  const hash = crypto
+    .createHmac("sha512", process.env.PAYSTACK_SECRET_KEY!)
+    .update(rawBody)
+    .digest("hex");
+
+  if (hash !== signature) {
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+  }
+
+  const body = JSON.parse(rawBody);
 
   if (body.event !== "charge.success") {
     return NextResponse.json({ ignored: true });

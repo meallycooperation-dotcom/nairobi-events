@@ -42,26 +42,49 @@ export function AuthForm({ mode }: AuthFormProps) {
             full_name: fullName,
           });
 
-            if (profileError) {
-              setMessage(profileError.message);
-            } else {
-              router.push("/profile");
-            }
+          if (profileError) {
+            setMessage(profileError.message);
           } else {
-            setMessage("Check your inbox for the confirmation email.");
+            router.push("/profile");
           }
-        }
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) {
-          setMessage(error.message);
         } else {
-          router.push("/profile");
+          setMessage("Check your inbox for the confirmation email.");
         }
+      }
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        setMessage(error.message);
+      } else {
+        router.push("/profile");
+      }
+    }
+
+    setLoading(false);
+  };
+
+  return (
+    <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl shadow-slate-200/40 backdrop-blur-sm">
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-semibold text-slate-950">
+          {mode === "signup" ? "Create an account" : "Welcome back"}
+        </h1>
+        <p className="mt-2 text-sm text-slate-600">
+          {mode === "signup"
+            ? "Register to buy tickets and manage your events."
+            : "Sign in to access your tickets, checkout, and dashboard."}
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {mode === "signup" && (
+          <label className="block text-sm font-medium text-slate-700">
+            Full name
+            <input
               required
               type="text"
               value={fullName}
@@ -71,6 +94,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             />
           </label>
         )}
+
         <label className="block text-sm font-medium text-slate-700">
           Email address
           <input
@@ -82,6 +106,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             placeholder="you@example.com"
           />
         </label>
+
         <label className="block text-sm font-medium text-slate-700">
           Password
           <input
@@ -93,6 +118,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             placeholder="Enter secure password"
           />
         </label>
+
         <button
           type="submit"
           disabled={loading}
@@ -101,12 +127,18 @@ export function AuthForm({ mode }: AuthFormProps) {
           {loading ? "Processing..." : mode === "signup" ? "Sign up" : "Sign in"}
         </button>
       </form>
+
       {message ? <p className="mt-4 text-center text-sm text-slate-700">{message}</p> : null}
+
       <p className="mt-6 text-center text-sm text-slate-600">
         {mode === "signup" ? (
-          <>Already have an account? <Link href="/login" className="font-semibold text-slate-950">Sign in</Link></>
+          <>
+            Already have an account? <Link href="/login" className="font-semibold text-slate-950">Sign in</Link>
+          </>
         ) : (
-          <>New to Nairobi Events? <Link href="/signup" className="font-semibold text-slate-950">Create account</Link></>
+          <>
+            New to Nairobi Events? <Link href="/signup" className="font-semibold text-slate-950">Create account</Link>
+          </>
         )}
       </p>
     </div>

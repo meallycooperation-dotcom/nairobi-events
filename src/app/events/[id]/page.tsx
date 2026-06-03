@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getEventById } from "@/services/events";
@@ -5,10 +6,52 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { TicketTierSelector } from "@/components/TicketTierSelector";
 
 type EventDetailPageProps = {
-  params: Promise<{
+  params: {
     id: string;
-  }>;
+  };
 };
+
+export async function generateMetadata({ params }: EventDetailPageProps): Promise<Metadata> {
+  const event = await getEventById(params.id);
+
+  if (!event) {
+    return {
+      title: "Event not found | Nairobi Events",
+      description: "The requested event could not be found.",
+    };
+  }
+
+  const description =
+    event.description ||
+    `Book tickets for ${event.title} in Nairobi and discover live experiences, shows, and local events.`;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const eventUrl = `${siteUrl}/events/${event.id}`;
+
+  return {
+    title: event.title,
+    description,
+    openGraph: {
+      title: event.title,
+      description,
+      type: "website",
+      url: eventUrl,
+      images: event.poster_url
+        ? [
+            {
+              url: event.poster_url,
+              alt: event.title,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: event.title,
+      description,
+      images: event.poster_url ? [event.poster_url] : undefined,
+    },
+  };
+}
 
 export default async function EventDetailPage({ params }: EventDetailPageProps) {
   const { id } = await params;

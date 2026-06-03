@@ -1,7 +1,26 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getPublishedEvents } from "@/services/events";
 import { EventCard } from "@/components/EventCard";
 import { EventSearchFilters } from "@/components/EventSearchFilters";
+
+export const metadata: Metadata = {
+  title: "Discover Nairobi Events",
+  description:
+    "Explore top Nairobi events, browse ticketed experiences, and book live shows, festivals, and workshops.",
+  openGraph: {
+    title: "Discover Nairobi Events",
+    description:
+      "Explore top Nairobi events, browse ticketed experiences, and book live shows, festivals, and workshops.",
+    type: "website",
+    images: [
+      {
+        url: "/poster1_converted.webp",
+        alt: "Discover Nairobi Events",
+      },
+    ],
+  },
+};
 
 export default async function HomePage() {
   const events = await getPublishedEvents();

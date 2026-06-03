@@ -15,8 +15,53 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nairobi Events",
-  description: "Buy tickets, manage event sales, and scan tickets with Supabase-powered authentication.",
+  title: {
+    default: "Nairobi Events",
+    template: "%s | Nairobi Events",
+  },
+  description:
+    "Discover live events in Nairobi, browse ticketed experiences, and book tickets with secure checkout.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  keywords: [
+    "Nairobi events",
+    "Nairobi tickets",
+    "events in Nairobi",
+    "concerts Nairobi",
+    "festivals Nairobi",
+    "ticketing Nairobi",
+  ],
+  openGraph: {
+    title: "Nairobi Events",
+    description:
+      "Discover live events in Nairobi, browse ticketed experiences, and book tickets with secure checkout.",
+    type: "website",
+    locale: "en_US",
+    siteName: "Nairobi Events",
+    images: [
+      {
+        url: "/poster1_converted.webp",
+        alt: "Nairobi Events - Discover live events in Nairobi",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Nairobi Events",
+    description:
+      "Discover live events in Nairobi, browse ticketed experiences, and book tickets with secure checkout.",
+    images: ["/poster1_converted.webp"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 };
 
 export default function RootLayout({

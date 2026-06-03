@@ -51,6 +51,11 @@ export const metadata: Metadata = {
       "Discover live events in Nairobi, browse ticketed experiences, and book tickets with secure checkout.",
     images: ["/poster1_converted.webp"],
   },
+  icons: {
+    icon: "/favicon.webp",
+    shortcut: "/favicon.webp",
+    apple: "/favicon.webp",
+  },
   robots: {
     index: true,
     follow: true,
